@@ -41,9 +41,22 @@ public static void main(String args[]){
         // define all valid state transitions for our state machine
         // (undefined transitions will be ignored)
         transition = new Transition[State.values().length][Msg.values().length];
+
         transition[State.IDLE.ordinal()][Msg.SEND_FILENAME.ordinal()] = new SendFilename();
-        transition[State.WAIT0.ordinal()][Msg.ACK0STAY.ordinal()] = new AskForTime();
-        transition[State.TIME_WAIT.ordinal()][Msg.TIME.ordinal()] = new Finish();
+
+        transition[State.WAIT0.ordinal()][Msg.ACK0STAY.ordinal()] = new stayACK0();
+        transition[State.WAIT0.ordinal()][Msg.ACK0TIMEOUT.ordinal()] = new timeout0();
+        transition[State.WAIT0.ordinal()][Msg.ACK0SENDDATA.ordinal()] = new ACK0send();
+        transition[State.WAIT0.ordinal()][Msg.ACK0SENDDATA.ordinal()] = new ACK0sendLast();
+
+        transition[State.WAIT1.ordinal()][Msg.ACK1STAY.ordinal()] = new stayACK0();
+        transition[State.WAIT1.ordinal()][Msg.ACK1TIMEOUT.ordinal()] = new timeout0();
+        transition[State.WAIT1.ordinal()][Msg.ACK1SENDDATA.ordinal()] = new ACK0send();
+        transition[State.WAIT1.ordinal()][Msg.ACK1SENDDATA.ordinal()] = new ACK0sendLast();
+
+
+
+
         System.out.println("INFO FSM constructed, current state: " + currentState);
     }
 
@@ -78,11 +91,68 @@ public static void main(String args[]){
         }
     }
 
-    class AskForTime extends Transition {
+    class stayACK0 extends Transition {
         @Override
         public State execute(Msg input) {
-            System.out.println("Time?");
-            return State.TIME_WAIT;
+            System.out.println("");
+            return State.WAIT0;
+        }
+    }
+
+    class timeout0 extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.WAIT0;
+        }
+    }
+
+    class ACK0send extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.WAIT1;
+        }
+    }
+
+    class ACK0sendLast extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.Wait1END;
+        }
+    }
+
+
+    class stayACK1 extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.WAIT1;
+        }
+    }
+
+    class timeout1 extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.WAIT1;
+        }
+    }
+
+    class ACK1send extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.WAIT0;
+        }
+    }
+
+    class ACK1sendLast extends Transition {
+        @Override
+        public State execute(Msg input) {
+            System.out.println("");
+            return State.Wait0END;
         }
     }
 
