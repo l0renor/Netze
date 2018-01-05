@@ -1,3 +1,5 @@
+package Sender;
+
 import java.util.zip.Adler32;
 
 public class PACKET {
