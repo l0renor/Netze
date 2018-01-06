@@ -19,9 +19,12 @@ public class Sender {
 
 //Filename,port,ip
 public static void main(String args[]) throws IOException {
-    String fileName = args[0];
-    int port = Integer.parseInt(args[1]);
-    String ip = args[2];
+//    String fileName = args[0];
+//    int port = Integer.parseInt(args[1]);
+//    String ip = args[2];
+        String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
+    int port = 8799;
+    String ip = "127.0.0.1";
     Path file = Paths.get(fileName);
     byte[] data = Files.readAllBytes(file);
     Sender s = new Sender(fileName,ip,port,data);
