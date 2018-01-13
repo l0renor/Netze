@@ -118,7 +118,7 @@ public class Reciever {
       byte[] data = PACKET.createPacket(false, new byte[0], false);
       sendData(data);
       lastACK = false;
-      System.out.println("Acknowledge for filename sent");
+      System.out.println("Acknowledge (0) for filename sent");
       return State.WAIT1;
     }
   }
