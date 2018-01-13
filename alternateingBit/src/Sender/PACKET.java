@@ -62,7 +62,7 @@ public class PACKET {
     }
 
     public static int getSize(byte[] paket) {
-        return ByteBuffer.wrap(paket, 10, 13).getInt();
+        return ByteBuffer.wrap(paket, 10, 4).getInt();
     }
 
     public static byte[] getContent(byte[] paket) {
