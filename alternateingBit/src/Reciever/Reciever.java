@@ -11,15 +11,15 @@ public class Reciever {
 
   public static void main(String args[]) throws IOException {
     int port = 8799;
-    String ip = "127.0.0.1";
-    Reciever r = new Reciever(ip, port);
+    Reciever r = new Reciever(port);
   }
 
   private String filename;
   private int port;
+  private int senderport;
   private DatagramSocket ds;
   private byte[] file;
-  private String ip;
+  private InetAddress senderinetadress;
   private boolean lastACK;
 
   String PATH = "C:\\Users\\fabia\\Downloads\\";
@@ -37,11 +37,10 @@ public class Reciever {
 
   private Transition[][] transition;
 
-  public Reciever(String ip, int port) throws SocketException {
+  public Reciever(int port) throws SocketException {
     this.port = port;
     this.file = new byte[0];
     currentState = State.IDLE;
-    this.ip = ip;
     lastACK = true;
 
     transition = new Transition[State.values().length][Msg.values().length];
@@ -71,6 +70,8 @@ public class Reciever {
     try {
       ds.receive(inPacket);
       byte[] packetData = inPacket.getData();
+      senderport = inPacket.getPort();
+      senderinetadress = inPacket.getAddress();
       if (PACKET.isCorrupt(packetData)) {
         processMsg(Msg.STAY); //corrupt
         System.out.println("Corrupt");
@@ -205,8 +206,7 @@ public class Reciever {
 
   private void sendData(byte[] data) {
     try {
-      InetAddress inetadress = InetAddress.getByName(ip);
-      DatagramPacket dp = new DatagramPacket(data, data.length, inetadress, port);
+      DatagramPacket dp = new DatagramPacket(data, data.length, senderinetadress, senderport);
       ds.send(dp);
     } catch (IOException e) {
       e.printStackTrace();
