@@ -42,6 +42,7 @@ public class Reciever {
     this.file = new byte[0];
     currentState = State.IDLE;
     this.ip = ip;
+    lastACK = true;
 
     transition = new Transition[State.values().length][Msg.values().length];
     //idle
@@ -72,8 +73,10 @@ public class Reciever {
       byte[] packetData = inPacket.getData();
       if (PACKET.isCorrupt(packetData)) {
         processMsg(Msg.STAY); //corrupt
+        System.out.println("Corrupt");
       } else if (PACKET.getAck(packetData) == lastACK) {
         processMsg(Msg.STAY); //wrong seq nr
+        System.out.println("Wrong nr"+PACKET.getAck(packetData)+lastACK);
       } else {
         int size = PACKET.getSize(packetData);
         byte[] newfile = new byte[file.length + size];

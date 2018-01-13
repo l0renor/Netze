@@ -23,9 +23,9 @@ public static void main(String args[]) throws IOException {
 //    int port = Integer.parseInt(args[1]);
 //    String ip = args[2];
 //        String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
-    String fileName = "C:\\Benutzer\\fabia\\Desktop\\Automat.pdf";
+    String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
     int port = 8799;
-    String ip = "127.0.0.1";
+    String ip = "localhost";
     Path file = Paths.get(fileName);
     byte[] data = Files.readAllBytes(file);
     Sender s = new Sender(fileName,ip,port,data);
