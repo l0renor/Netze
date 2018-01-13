@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Sender {
 
@@ -18,6 +16,10 @@ public class Sender {
     private int position = 0;
     private byte[] file;
 
+    double loss;
+    double duplicate;
+    double corrupt;
+
 //Filename,port,ip
 public static void main(String args[]) throws IOException {
 //    String fileName = args[0];
@@ -26,13 +28,15 @@ public static void main(String args[]) throws IOException {
     String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
     String name = "sigar-2015-01.pdf";
     //String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
-
-
+    boolean withFilterClass = false;
+    double corrupt = 0.1;
+    double loss = 0.1;
+    double duplicate = 0.1;
 
     int port = 8799;
     String ip = "localhost";
     byte[] data = Files.readAllBytes(new File(name).toPath());
-    Sender s = new Sender("sigar-2015-01.pdf",ip,port,data);
+    Sender s = new Sender("sigar-2015-01.pdf",ip,port,data, withFilterClass, loss, duplicate, corrupt);
 
 
 }
@@ -62,12 +66,16 @@ public static void main(String args[]) throws IOException {
     /**
      * constructor
      */
-    public Sender(String fileName,String ip, int port,byte[] file) throws SocketException {
+    public Sender(String fileName,String ip, int port,byte[] file, boolean withFilterClass, double loss, double duplicate, double corrupt) throws SocketException {
         this.port = port;
         this.fileName = fileName;
         this.ip = ip;
         this.file = file;
         currentState = State.IDLE;
+
+        this.loss = loss;
+        this.duplicate = duplicate;
+        this.corrupt = corrupt;
         // define all valid state transitions for our state machine
         // (undefined transitions will be ignored)
         transition = new Transition[State.values().length][Msg.values().length];
@@ -86,11 +94,11 @@ public static void main(String args[]) throws IOException {
         //waitACK0end
         transition[State.Wait0END.ordinal()][Msg.STAY.ordinal()] = new End0stay();
         transition[State.Wait0END.ordinal()][Msg.SEND_AGAIN.ordinal()] = new timeoutend0();
-        transition[State.Wait0END.ordinal()][Msg.SENDDATA.ordinal()] = new End0end();
+        transition[State.Wait0END.ordinal()][Msg.SENDLASTDATA.ordinal()] = new End0end();
         //waitACK1end
         transition[State.Wait1END.ordinal()][Msg.STAY.ordinal()] = new End1stay();
         transition[State.Wait1END.ordinal()][Msg.SEND_AGAIN.ordinal()] = new timeoutend1();
-        transition[State.Wait1END.ordinal()][Msg.SENDDATA.ordinal()] = new End1end();
+        transition[State.Wait1END.ordinal()][Msg.SENDLASTDATA.ordinal()] = new End1end();
 
 
 
@@ -98,7 +106,11 @@ public static void main(String args[]) throws IOException {
         System.out.println("INFO FSM constructed, current state: " + currentState);
 
 
-        ds = new DatagramSocket();
+        if(withFilterClass) {
+            ds = new FilterDatagramSocket(port, loss, duplicate, corrupt);
+        } else {
+            ds = new DatagramSocket(port);
+        }
         ds.setSoTimeout(500);
         processMsg(Msg.SEND_FILENAME);
 
@@ -204,7 +216,7 @@ public static void main(String args[]) throws IOException {
         public State execute(Msg input) {
             byte[] p = new byte[490];
             System.arraycopy(file, position, p, 0, file.length - position); //letzte daten länge berechenen
-            byte [] data = PACKET.createPacket(true, p, false);
+            byte [] data = PACKET.createPacket(true, p, true);
             sendData(data);
             System.out.println("send last data 1");
             return State.Wait1END;
@@ -247,7 +259,7 @@ public static void main(String args[]) throws IOException {
         public State execute(Msg input) {
             byte[] p = new byte[490];
             System.arraycopy(file, position, p, 0, file.length - position); //letzte daten länge berechenen
-            byte [] data = PACKET.createPacket(true, p, false);
+            byte [] data = PACKET.createPacket(true, p, true);
             sendData(data);
             System.out.println("send last data 1");
             return State.Wait0END;

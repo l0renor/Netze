@@ -22,7 +22,7 @@ public class Reciever {
   private InetAddress senderinetadress;
   private boolean lastACK;
 
-  String PATH = "F:\\Dokumente\\Uni\\";
+  private static final String PATH = "F:\\Dokumente\\Uni\\";
 
 
   enum State {
@@ -58,7 +58,6 @@ public class Reciever {
 
     System.out.println("INFO FSM constructed, current state: " + currentState);
 
-    ds = new DatagramSocket(port);
     while (currentState != State.END) {
       waitData();
     }
@@ -160,6 +159,7 @@ public class Reciever {
       sendData(data);
       lastACK = false;
       System.out.println("Last Acknowledge 0 sent");
+      createFile();
       return State.END;
     }
   }
