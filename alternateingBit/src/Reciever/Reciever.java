@@ -134,6 +134,9 @@ public class Reciever {
   class stayWait0 extends Transition {
     @Override
     public State execute(Msg input) {
+        byte[] data = PACKET.createPacket(true, new byte[0], false);
+        sendData(data);
+        lastACK = true;
       System.out.println("Staying in 0");
       return State.WAIT0;
     }
@@ -164,6 +167,9 @@ public class Reciever {
   class stayWait1 extends Transition {
     @Override
     public State execute(Msg input) {
+        byte[] data = PACKET.createPacket(false, new byte[0], false);
+        sendData(data);
+        lastACK = false;
       System.out.println("Staying in 0");
       return State.WAIT1;
     }

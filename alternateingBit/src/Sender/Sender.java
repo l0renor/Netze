@@ -1,5 +1,6 @@
 package Sender;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -23,12 +24,15 @@ public static void main(String args[]) throws IOException {
 //    int port = Integer.parseInt(args[1]);
 //    String ip = args[2];
     String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
+    String name = "sigar-2015-01.pdf";
     //String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
+
+
+
     int port = 8799;
     String ip = "localhost";
-    Path file = Paths.get(fileName);
-    byte[] data = Files.readAllBytes(file);
-    Sender s = new Sender(fileName,ip,port,data);
+    byte[] data = Files.readAllBytes(new File(name).toPath());
+    Sender s = new Sender("sigar-2015-01.pdf",ip,port,data);
 
 
 }
@@ -77,8 +81,8 @@ public static void main(String args[]) throws IOException {
         //wait1
         transition[State.WAIT1.ordinal()][Msg.STAY.ordinal()] = new stayACK1();
         transition[State.WAIT1.ordinal()][Msg.SEND_AGAIN.ordinal()] = new timeout1();
-        transition[State.WAIT1.ordinal()][Msg.SENDDATA.ordinal()] = new ACK0send();
-        transition[State.WAIT1.ordinal()][Msg.SENDLASTDATA.ordinal()] = new ACK0sendLast();
+        transition[State.WAIT1.ordinal()][Msg.SENDDATA.ordinal()] = new ACK1send();
+        transition[State.WAIT1.ordinal()][Msg.SENDLASTDATA.ordinal()] = new ACK1sendLast();
         //waitACK0end
         transition[State.Wait0END.ordinal()][Msg.STAY.ordinal()] = new End0stay();
         transition[State.Wait0END.ordinal()][Msg.SEND_AGAIN.ordinal()] = new timeoutend0();
