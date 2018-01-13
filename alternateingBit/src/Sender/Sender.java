@@ -22,8 +22,8 @@ public static void main(String args[]) throws IOException {
 //    String fileName = args[0];
 //    int port = Integer.parseInt(args[1]);
 //    String ip = args[2];
-//        String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
-    String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
+    String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
+    //String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
     int port = 8799;
     String ip = "localhost";
     Path file = Paths.get(fileName);
@@ -111,10 +111,10 @@ public static void main(String args[]) throws IOException {
             byte[] packetData = inPacket.getData();
             if(PACKET.isCorrupt(packetData)){
                 processMsg(Msg.SEND_AGAIN); //corrupt
-            }else if(!PACKET.isCorrupt(packetData) &&(PACKET.getAck(packetData)!=PACKET.getAck(lastpacket))){
+            }else if((PACKET.getAck(packetData)!=PACKET.getAck(lastpacket))){
                 processMsg(Msg.SEND_AGAIN);//nicht corrupt aber falsches ack
             }
-            else if(!PACKET.isCorrupt(packetData) &&(PACKET.getAck(packetData)!=PACKET.getAck(lastpacket))){
+            else {
                 if(file.length - position < 490){
                     processMsg(Msg.SENDLASTDATA); //last data
                 }else {

@@ -22,7 +22,7 @@ public class Reciever {
   private InetAddress senderinetadress;
   private boolean lastACK;
 
-  String PATH = "C:\\Users\\fabia\\Downloads\\";
+  String PATH = "F:\\Dokumente\\Uni\\";
 
 
   enum State {
