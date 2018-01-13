@@ -200,7 +200,7 @@ public class Reciever {
 
   private boolean createFile() {
     try {
-      Path filePath = Files.createFile(Paths.get(PATH + filename));
+      Path filePath = Files.createFile(Paths.get("F:\\Dokumente\\Uni\\test.pdf"));
       Files.write(filePath, file);
       System.out.println("File has been transferred and created at " + PATH);
       return true;
