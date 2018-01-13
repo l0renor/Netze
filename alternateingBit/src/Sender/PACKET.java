@@ -1,5 +1,6 @@
 package Sender;
 
+import java.nio.ByteBuffer;
 import java.util.zip.Adler32;
 
 public class PACKET {
@@ -58,6 +59,16 @@ public class PACKET {
             return true;
         }
         return false;
+    }
+
+    public static int getSize(byte[] paket) {
+        return ByteBuffer.wrap(paket, 10, 13).getInt();
+    }
+
+    public static byte[] getContent(byte[] paket) {
+        byte[] content = new byte[getSize(paket)];
+        System.arraycopy(paket, 14, content, 0, getSize(paket));
+        return content;
     }
 
     public static boolean isEnd(byte[] paket){
