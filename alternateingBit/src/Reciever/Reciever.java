@@ -1,5 +1,6 @@
 package Reciever;
 
+import Sender.FilterDatagramSocket;
 import Sender.PACKET;
 import java.io.IOException;
 import java.net.*;
@@ -22,7 +23,6 @@ public class Reciever {
   private InetAddress senderinetadress;
   private boolean lastACK;
 
-  private static final String PATH = "F:\\Dokumente\\Uni\\";
 
 
   enum State {
@@ -42,7 +42,8 @@ public class Reciever {
     this.file = new byte[0];
     currentState = State.IDLE;
     lastACK = true;
-
+    ds = new DatagramSocket(port);
+   // ds = new FilterDatagramSocket(port,0.1,0.2, 0.2);
     transition = new Transition[State.values().length][Msg.values().length];
     //idle
     transition[State.IDLE.ordinal()][Msg.SEND_ACK.ordinal()] = new RcvFilename();
@@ -161,9 +162,12 @@ public class Reciever {
       createFile();
       System.out.println("Last Acknowledge 0 sent");
       createFile();
-      return State.END;
+      lastACK = true;
+      return State.IDLE;
+
     }
   }
+
 
   class stayWait1 extends Transition {
     @Override
@@ -195,15 +199,17 @@ public class Reciever {
       lastACK = true;
       System.out.println("Last Acknowledge 1 sent");
       createFile();
-      return State.END;
+      lastACK = true;
+      return State.IDLE;
     }
   }
 
   private boolean createFile() {
     try {
-      Path filePath = Files.createFile(Paths.get("F:\\Dokumente\\Uni\\test.pdf"));
+      Path filePath = Files.createFile(Paths.get( System.getProperty("user.dir")+ "\\"+"a"+filename));
       Files.write(filePath, file);
-      System.out.println("File has been transferred and created at " + PATH);
+      System.out.println("File has been transferred and created");
+      file = new byte[0];
       return true;
     } catch (IOException e) {
       e.printStackTrace();

@@ -14,7 +14,7 @@ public class FilterDatagramSocket extends DatagramSocket {
   private boolean resend = false;
 
   public FilterDatagramSocket(int port, double loss, double duplicate, double corrupt) throws SocketException {
-    super(port);
+    super();
     this.CORRUPT = corrupt;
     this.LOSS = loss;
     this.DUPLICATE = duplicate;
@@ -34,35 +34,39 @@ public class FilterDatagramSocket extends DatagramSocket {
           packetData[arrayNumber] += 1;
           p.setData(packetData);
           super.send(p);
+        }else {
+            super.send(p);
         }
       }
     }
   }
 
-@Override
-    public void receive(DatagramPacket p) throws IOException {
-    DatagramPacket inPacket = new DatagramPacket(new byte[512], 512);
-    if (old != null) {
-        p = old;
-        old = null;
-    } else {
-
-
-
-        if (Math.random() > LOSS) {
-            super.receive(inPacket);
-            if (Math.random() < DUPLICATE) {
-                old = inPacket;
-            } else if (Math.random() < CORRUPT) {
-                    byte[] packetData = inPacket.getData();
-                    int arrayNumber = (int) (Math.random() * 498) + 14;
-                    packetData[arrayNumber] += 1;
-                    inPacket.setData(packetData);
-                }
-                p = inPacket;
-            }
-            receive(p);
-        }
-
-}
+//@Override
+//    public void receive(DatagramPacket p) throws IOException {
+//    DatagramPacket inPacket = new DatagramPacket(new byte[512], 512);
+//    if (old != null) {
+//        p = old;
+//        old = null;
+//    } else {
+//
+//
+//
+//        if (Math.random() > LOSS) {
+//            super.receive(inPacket);
+//            if (Math.random() < DUPLICATE) {
+//                if(inPacket.getPort() < 0) {
+//                    old = inPacket;
+//                }
+//            } else if (Math.random() < CORRUPT) {
+//                    byte[] packetData = inPacket.getData();
+//                    int arrayNumber = (int) (Math.random() * 498) + 14;
+//                    packetData[arrayNumber] += 1;
+//                    inPacket.setData(packetData);
+//                }
+//                p = inPacket;
+//            }
+//            receive(p);
+//        }
+//
+//}
 }

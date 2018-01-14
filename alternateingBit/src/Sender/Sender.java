@@ -22,17 +22,23 @@ public class Sender {
 
 //Filename,port,ip
 public static void main(String args[]) throws IOException {
+    long start = System.currentTimeMillis();
     String fileName = args[0];
     String ip = args[1];
-    boolean withFilterClass = false;
+    boolean withFilterClass = true;
     double corrupt = 0.1;
     double loss = 0.1;
     double duplicate = 0.1;
 
+
     int port = 8799;
     byte[] data = Files.readAllBytes(new File(fileName).toPath());
-    Sender s = new Sender("sigar-2015-01.pdf",ip,port,data, withFilterClass, loss, duplicate, corrupt);
-
+    Sender s = new Sender(fileName,ip,port,data, withFilterClass, loss, duplicate, corrupt);
+    long length = data.length;
+    double duration =  System.currentTimeMillis() - start;
+    duration = duration/1000;
+    double rate = length/duration;
+    System.out.println("Goodputrate =" + rate +"bytes/sec");
 
 }
     // all states for this FSM
@@ -104,7 +110,7 @@ public static void main(String args[]) throws IOException {
         if(withFilterClass) {
             ds = new FilterDatagramSocket(port, loss, duplicate, corrupt);
         } else {
-            ds = new DatagramSocket(port);
+            ds = new DatagramSocket();
         }
         ds.setSoTimeout(500);
         processMsg(Msg.SEND_FILENAME);
@@ -254,7 +260,7 @@ public static void main(String args[]) throws IOException {
         public State execute(Msg input) {
             byte[] p = new byte[490];
             System.arraycopy(file, position, p, 0, file.length - position); //letzte daten länge berechenen
-            byte [] data = PACKET.createPacket(true, p, true);
+            byte [] data = PACKET.createPacket(false, p, true);
             sendData(data);
             System.out.println("send last data 1");
             return State.Wait0END;
