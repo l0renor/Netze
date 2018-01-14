@@ -160,6 +160,7 @@ public class Reciever {
       byte[] data = PACKET.createPacket(false, new byte[0], false);
       sendData(data);
       lastACK = false;
+      createFile();
       System.out.println("Last Acknowledge 0 sent");
       createFile();
       return State.END;
