@@ -58,6 +58,8 @@ public class Reciever {
 
     System.out.println("INFO FSM constructed, current state: " + currentState);
 
+    ds = new DatagramSocket(port);
+
     while (currentState != State.END) {
       waitData();
     }
