@@ -10,6 +10,8 @@ public class FilterDatagramSocket extends DatagramSocket {
   private final double LOSS;
   private final double DUPLICATE;
   private final double CORRUPT;
+  private   DatagramPacket old = null;
+  private boolean resend = false;
 
   public FilterDatagramSocket(int port, double loss, double duplicate, double corrupt) throws SocketException {
     super(port);
@@ -36,4 +38,31 @@ public class FilterDatagramSocket extends DatagramSocket {
       }
     }
   }
+
+@Override
+    public void receive(DatagramPacket p) throws IOException {
+    DatagramPacket inPacket = new DatagramPacket(new byte[512], 512);
+    if (old != null) {
+        p = old;
+        old = null;
+    } else {
+
+
+
+        if (Math.random() > LOSS) {
+            super.receive(inPacket);
+            if (Math.random() < DUPLICATE) {
+                old = inPacket;
+            } else if (Math.random() < CORRUPT) {
+                    byte[] packetData = inPacket.getData();
+                    int arrayNumber = (int) (Math.random() * 498) + 14;
+                    packetData[arrayNumber] += 1;
+                    inPacket.setData(packetData);
+                }
+                p = inPacket;
+            }
+            receive(p);
+        }
+
+}
 }

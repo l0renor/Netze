@@ -22,20 +22,15 @@ public class Sender {
 
 //Filename,port,ip
 public static void main(String args[]) throws IOException {
-//    String fileName = args[0];
-//    int port = Integer.parseInt(args[1]);
-//    String ip = args[2];
-    String fileName = "F:\\Dokumente\\Uni\\IntelliJ\\NetzeB\\alternateingBit\\sigar-2015-01.pdf";
-    String name = "sigar-2015-01.pdf";
-    //String fileName = "C:\\Users\\fabia\\OneDrive\\IDE_Workspaces\\IDEA\\Netze\\alternateingBit\\src\\Sender\\08_AVLBaeume.pdf";
+    String fileName = args[0];
+    String ip = args[1];
     boolean withFilterClass = false;
     double corrupt = 0.1;
     double loss = 0.1;
     double duplicate = 0.1;
 
     int port = 8799;
-    String ip = "localhost";
-    byte[] data = Files.readAllBytes(new File(name).toPath());
+    byte[] data = Files.readAllBytes(new File(fileName).toPath());
     Sender s = new Sender("sigar-2015-01.pdf",ip,port,data, withFilterClass, loss, duplicate, corrupt);
 
 
