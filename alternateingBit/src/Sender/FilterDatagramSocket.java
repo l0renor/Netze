@@ -41,32 +41,30 @@ public class FilterDatagramSocket extends DatagramSocket {
     }
   }
 
-//@Override
-//    public void receive(DatagramPacket p) throws IOException {
-//    DatagramPacket inPacket = new DatagramPacket(new byte[512], 512);
-//    if (old != null) {
-//        p = old;
-//        old = null;
-//    } else {
-//
-//
-//
-//        if (Math.random() > LOSS) {
-//            super.receive(inPacket);
-//            if (Math.random() < DUPLICATE) {
-//                if(inPacket.getPort() < 0) {
-//                    old = inPacket;
-//                }
-//            } else if (Math.random() < CORRUPT) {
-//                    byte[] packetData = inPacket.getData();
-//                    int arrayNumber = (int) (Math.random() * 498) + 14;
-//                    packetData[arrayNumber] += 1;
-//                    inPacket.setData(packetData);
-//                }
-//                p = inPacket;
-//            }
-//            receive(p);
-//        }
-//
-//}
+@Override
+    public void receive(DatagramPacket p) throws IOException {
+    DatagramPacket inPacket = new DatagramPacket(new byte[512], 512);
+    if (old != null) {
+        p = old;
+        old = null;
+    } else {
+
+
+
+        if (Math.random() > LOSS) {
+            super.receive(p);
+            if (Math.random() < DUPLICATE) {
+              old = p;
+            } else if (Math.random() < CORRUPT) {
+                    byte[] packetData = p.getData();
+                    int arrayNumber = (int) (Math.random() * 498) + 14;
+                    packetData[arrayNumber] += 1;
+                    p.setData(packetData);
+                }
+            }else {
+          receive(p);
+        }
+        }
+
+}
 }
